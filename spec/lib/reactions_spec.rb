@@ -5,12 +5,14 @@ describe "Reaction" do
     @user = create :User
     @author = create :User
     @post = create :Post
+    @reaction_id = rand(10)
     @user_daily = create :UserDaily, { user: @user.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
     @author_daily = create :UserDaily, { user: @author.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
+    @post_reactions = create :PostReactions, { post: @post.id }
   end
 
   before :all do
-    open("http://#{HOST}/reactions?user=#{@user.id}&post=#{@post.id}&author=#{@author.id}")
+    open("http://#{HOST}/reactions?user=#{@user.id}&post=#{@post.id}&author=#{@author.id}&reaction=#{@reaction_id}")
   end
 
   it "should increase the user's num of reactions" do
@@ -37,6 +39,12 @@ describe "Reaction" do
     it "should set a TTL for the objects" do
       $redis.ttl(@user_daily.key).should > 0
       $redis.ttl(@author_daily.key).should > 0
+    end
+  end
+
+  describe "PostReactions" do
+    it "should increase the post reaction count by 1 for the given reaction" do
+      @post_reactions.data["reaction_#{@reaction_id}"].to_i.should eq @post_reactions.initial_data["reaction_#{@reaction_id}"].to_i + 1      
     end
   end
 
