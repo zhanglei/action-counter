@@ -44,7 +44,7 @@ describe "Post Created" do
       end
 
       it "should not increase the league posts count if league_count is false" do
-        open("http://#{HOST}/post_create?user=#{@user.id}&post=#{@post.id}&league=#{@league_id}&team=#{@team_id + 1}&league_count=0&writers_count=true&locale=#{@locale}ulb=false")
+        open("http://#{HOST}/post_create?user=#{@user.id}&post=#{@post.id}&league=#{@league_id}&team=#{@team_id + 1}&league_count=0&writers_count=true&locale=#{@locale}&ulb=false")
         @league_counters.data["posts"].to_i.should eq @league_counters.initial_data["posts"].to_i + 1
       end
     end
