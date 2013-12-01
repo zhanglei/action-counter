@@ -35,8 +35,7 @@ describe "Read Action" do
   end
 
   before :each do
-    number = $redis.hget("Post_100", "reads")
-    open("http://#{HOST}/reads?post=#{@post.id}&user=#{@user.id}&author=#{@author.id}&league=#{@league_weekly.ids[:league]}&index=#{number}&team=#{@team_weekly.ids[:team]}&locale=#{@locale}&ulb=1&plb=1")
+    open("http://#{HOST}/reads?post=#{@post.id}&user=#{@user.id}&author=#{@author.id}&league=#{@league_weekly.ids[:league]}&team=#{@team_weekly.ids[:team]}&locale=#{@locale}&ulb=1&plb=1")
   end
 
   describe "User" do
