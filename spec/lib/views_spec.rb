@@ -24,8 +24,8 @@ describe "View Action" do
   end
 
   describe "Post" do
-    it "should increase the post views counter" do
-      @post.data["views"].to_i.should eq @post.initial_data["views"].to_i + 1
+    it "should increase the post reads counter" do
+      @post.data["reads"].to_i.should eq @post.initial_data["reads"].to_i + 1
     end
   end
 

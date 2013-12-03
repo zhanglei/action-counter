@@ -107,6 +107,12 @@ function Base:countAndSetIf(should_count, countKey, redisKey, setKey)
     redis.call("HSET", redisKey, setKey, setCount)
   end
 end
+
+function Base:countIfEquals(hash_name, key, equalsTo)
+  if redis.call("hget", hash_name, key) == equalsTo then
+    redis.call("zadd", self.redis_key, 1, hash_name)
+  end
+end
 ----------------------------------------------------------
 
 

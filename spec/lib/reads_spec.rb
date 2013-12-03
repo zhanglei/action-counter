@@ -255,6 +255,20 @@ describe "Read Action" do
     end
   end
 
+  describe "100 reads" do
+    context "when post with 99 reads gets a read", focus: true  do
+      before :each do
+        @post_id = 2407
+        100.times do
+          open("http://#{HOST}/reads?post=#{@post_id}&user=#{@user.id}&author=#{@author.id}&league=#{@league_weekly.ids[:league]}&team=#{@team_weekly.ids[:team]}&locale=#{@locale}&ulb=1&plb=0")
+        end
+      end
+      it "should be added to 100_reads hash" do
+        $redis.zrevrange("100_reads", 0, 1).first.should eq "Post_#{@post_id}"
+      end
+    end
+  end
+
 
   describe "get" do
     ## Those specs are not really related to the 'Read Action', i'm just using the data from the specs above...
