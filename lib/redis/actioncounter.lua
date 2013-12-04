@@ -182,7 +182,7 @@ local function addValuesToKey(tbl, key)
     end
     rslt = tempResult
     if #rslt > 0 then
-      match = rslt[1]:match("{.*}")
+      match = rslt[1]:match("{[%w_]*}")
     else
       match = nil
     end
