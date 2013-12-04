@@ -105,7 +105,13 @@ function Base:countAndSetIf(should_count, countKey, redisKey, setKey)
     self:count(countKey, 1)
     local setCount = redis.call("ZCOUNT", self.redis_key, "-inf", "+inf")
     redis.call("HSET", redisKey, setKey, setCount)
-  end  
+  end
+end
+
+function Base:countIfEquals(hash_name, key, equalsTo)
+  if redis.call("hget", hash_name, key) == equalsTo then
+    redis.call("zadd", self.redis_key, 1, hash_name)
+  end
 end
 ----------------------------------------------------------
 
@@ -127,7 +133,7 @@ end
 
 local function justDebugIt(tbl, key)
   local rslt = { key }
-  local match = key:match("{.*}")
+  local match = key:match("{[%w_]*}")
 
   while match do
     local subStrings = flattenArray({ tbl[match:sub(2, -2)] })
@@ -141,7 +147,7 @@ local function justDebugIt(tbl, key)
        concatToArray(tempResult, dup)
     end
     rslt = tempResult
-    match = rslt[1]:match("{.*}")
+    match = rslt[1]:match("{[%w_]*}")
   end
 
   if #rslt == 1 then
@@ -161,7 +167,7 @@ local function addValuesToKey(tbl, key)
   end
 
   local rslt = { key }
-  local match = key:match("{.*}")
+  local match = key:match("{[%w_]*}")
 
   while match do
     local subStrings = flattenArray({ tbl[match:sub(2, -2)] })

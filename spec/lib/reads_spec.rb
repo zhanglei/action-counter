@@ -35,8 +35,7 @@ describe "Read Action" do
   end
 
   before :each do
-    number = $redis.hget("Post_100", "reads")
-    open("http://#{HOST}/reads?post=#{@post.id}&user=#{@user.id}&author=#{@author.id}&league=#{@league_weekly.ids[:league]}&index=#{number}&team=#{@team_weekly.ids[:team]}&locale=#{@locale}&ulb=1&plb=1")
+    open("http://#{HOST}/reads?post=#{@post.id}&user=#{@user.id}&author=#{@author.id}&league=#{@league_weekly.ids[:league]}&team=#{@team_weekly.ids[:team]}&locale=#{@locale}&ulb=1&plb=1")
   end
 
   describe "User" do
@@ -85,7 +84,7 @@ describe "Read Action" do
     end
   end
 
-   describe "UserWeeklyDemographics" do
+  describe "UserWeeklyDemographics" do
     it "should increase reads counter" do
       $redis.hget(@user_weekly_demographics_key, "--").to_i.should eq @user_weekly_demographics_data["--"].to_i + 1
     end
@@ -253,6 +252,20 @@ describe "Read Action" do
 
     it "should not increase the author's reads count in the leaderboard for the given league and current month and year" do
       @team_monthly.set["post_#{@post.id}"].to_i.should eq @team_monthly_data["post_#{@post.id}"]
+    end
+  end
+
+  describe "100 reads" do
+    context "when post with 99 reads gets a read", focus: true  do
+      before :each do
+        @post_id = 2407
+        100.times do
+          open("http://#{HOST}/reads?post=#{@post_id}&user=#{@user.id}&author=#{@author.id}&league=#{@league_weekly.ids[:league]}&team=#{@team_weekly.ids[:team]}&locale=#{@locale}&ulb=1&plb=0")
+        end
+      end
+      it "should be added to 100_reads hash" do
+        $redis.zrevrange("100_reads", 0, 1).first.should eq "Post_#{@post_id}"
+      end
     end
   end
 
