@@ -30,7 +30,7 @@ function getValues(key, attributes)
 		value = red:zrevrange(key, from, to, "withscores")
 	end
 
-	if type(value) == "table" then 
+	if type(value) == "table" then
 		value = red:array_to_hash(value)
 	end
 	return value
@@ -49,4 +49,8 @@ end
 if type(response) == "table" then
 	response = cjson.encode(response)
 end
+
+ok, err = red:set_keepalive(10000, 100)
+if not ok then utils:logErrorAndExit("Error setting redis keep alive ".. err) end
+
 ngx.say(response)
