@@ -50,7 +50,4 @@ if type(response) == "table" then
 	response = cjson.encode(response)
 end
 
-ok, err = red:set_keepalive(10000, 100)
-if not ok then utils:logErrorAndExit("Error setting redis keep alive ".. err) end
-
 ngx.say(response)
