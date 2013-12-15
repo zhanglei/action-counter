@@ -8,11 +8,8 @@ local args_json = cjson.encode(args)
 local red = utils:initRedis()
 
 local ok, err = red:evalsha(ngx.var.redis_mobile_hash, 1, "args", args_json)
-if not ok then utils:logErrorAndExit("Error evaluating redis MOBILE script: ".. err) end
+--Because we have some mobile devices with the old api, don't logging errors cause there are LOTS of from them!
 
 ok, err = red:set_keepalive(10000, 100)
-if not ok then utils:logErrorAndExit("Error setting redis keep alive from MOBILE".. err) end
-
+if not ok then ngx.log(ngx.ERR, "Error setting redis keep alive from MOBILE " .. err) end
 utils:emptyGif()
-
-
