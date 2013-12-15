@@ -18,3 +18,13 @@ syncToS3 access_logs/$YESTERDAY
 YESTERDAY_MONTH="$(date +%Y/%m -d "yesterday")"
 syncToS3 $YESTERDAY_MONTH/monthly_backup
 syncToS3 $YESTERDAY_MONTH/weekly_backup
+
+
+DeleteDaily30DaysAgo()
+{
+  THIRTEE_DAYS_AGO="$(date +%Y/%m/%d -d "30 day ago")"
+  aws s3 rm s3://action-counter-logs/$THIRTEE_DAYS_AGO --recursive
+}
+
+#Enable in Jan 14
+#DeleteDaily30DaysAgo
