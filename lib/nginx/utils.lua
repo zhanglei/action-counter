@@ -17,6 +17,15 @@ function utils:normalizeKeys(tbl)
         value = { v }
       end
     end
+
+    if type(value) == "table" then
+      for key, vl in pairs(value) do
+        value[key] = vl:gsub("?", "")
+      end
+    else
+      value = value:gsub("?", "")
+    end
+
     normalized[key] = value
   end
   return normalized

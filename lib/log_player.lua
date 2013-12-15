@@ -26,7 +26,7 @@ end
 
 function parseQueryArgs(queryArgs)
   params = {}
-  for k,v in queryArgs:gmatch("([%w_]+%[?%]?)=([^&]+)") do
+  for k,v in queryArgs:gmatch("([%w_]+%[?%]?)=([^&%?]+)") do
     if k:match("[[]]") then
       local key = k:gsub("[[]]", "")
       --key = k:gsub("amp;", "")
@@ -45,8 +45,9 @@ end
 function parseArgs(line)
   ip, request_time, query_args = line:match("^([^%s]+).*%[(.*)].*GET%s*(.*)%s* HTTP")
   args = parseQueryArgs(query_args)
-  if not isMobileAction(query_args:match("%/(.*)%?")) then args["action"] = query_args:match("%/(.*)%?") end
-  args["alias_action"] = query_args:match("%/(.*)%?") -- ugly patch because on mobile we have an arg called 'action'
+  local action = query_args:match("%/([^%?]*)%?")
+  if not isMobileAction(action) then args["action"] = action end
+  args["alias_action"] = action -- ugly patch because on mobile we have an arg called 'action'
   date = parseDate(request_time)
   args["day"] = os.date("%d", date)
   args["week"] = os.date("%W", date)
