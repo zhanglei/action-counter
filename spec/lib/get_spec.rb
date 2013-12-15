@@ -116,5 +116,31 @@ describe "Get" do
     		end
     	end
     end
+
+    describe "redis errors handling" do
+      describe "non existing key" do
+        it "should return a json with an error for non existing key" do
+          hash = get("key=Non_Existing")
+          hash.keys.should include("error")
+        end
+      end
+
+      describe "request of wrong data type" do
+        it "should return a json with an error when requesting zset data from hash data" do
+          hash = get("key=#{@user.key}&from=0&to=-1")
+          hash.keys.should include("error")
+        end
+
+        it "should return a json with an error when requesting hash data from zset data" do
+          hash = get("key=#{@team_monthly_leaderboard.key}&attr=reads")
+          hash.keys.should include("error")
+        end
+
+        it "should return a json with an error when requesting hash data from zset data" do
+          hash = get("key=#{@team_monthly_leaderboard.key}&attr[]=reads&attr[]=logins")
+          hash.keys.should include("error")
+        end
+      end
+    end
   end
 end
