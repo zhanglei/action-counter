@@ -53,6 +53,13 @@ weeklyBackup()
   cp $DEST_RDB_FILE_PATH.gz $CURRENT_WEEK_BACKUPS_FOLDER/$(basename $DEST_RDB_FILE_PATH).gz
 }
 
+delete10DaysAgo()
+{
+  TEN_DAYS_AGO="$(date +%Y/%m/%d -d "10 day ago")"
+  rm -rfv $BACKUP_FOLDER/$TEN_DAYS_AGO/*
+  rm -rfv $BACKUP_FOLDER/access_logs/$TEN_DAYS_AGO/*
+}
+
 copyLogsFile
 copyRDBFile
 if [ $(date +%d) == "01" ]
@@ -65,3 +72,5 @@ if [ $(date +%u) == "7" ]
 then
   weeklyBackup
 fi
+
+delete10DaysAgo
