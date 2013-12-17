@@ -10,166 +10,45 @@ describe "ActionCounter" do
     @author_daily = create :UserDaily, { user: @author.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
   end
 
-  describe "Share Action" do
-    before :all do
-      open("http://#{HOST}/shares?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
-    end
-
-    it "should increase the user's num of shares by 1" do
-      @user.data["shares"].to_i.should eq @user.initial_data["shares"].to_i + 1
-    end
-
-    it "should increase the post's author num of shares he got" do
-      @author.data["shares_got"].to_i.should eq @author.initial_data["shares_got"].to_i + 1
-    end
-
-    it "should increase the posts num of shares by 1" do
-      @post.data["shares"].to_i.should eq @post.initial_data["shares"].to_i + 1
-    end
-
-    it "should increase the author's UserWeekly shares count" do
-      @user_weekly.data["shares"].to_i.should eq @user_weekly.initial_data["shares"].to_i + 1
-    end
-
-    it "author num of shares he got should be equal to the number of shares in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
-      @author.data["shares_got"].should eq @user_weekly.data["shares"]
-    end
-
-    describe "UserDaily" do
-      it "should increase the daily shares of the user by one" do
-        @user_daily.data["shares"].to_i.should eq @user_daily.initial_data["shares"].to_i + 1
+  [:post_page_likes, :post_page_gplus,  :tweets, :shares, :post_page_facebook_shares, :post_page_gplus_shares].each do |action|
+    describe action.to_s do
+      before :all do
+         open("http://#{HOST}/#{action}?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
       end
 
-      it "should increase the daily shares of the author by one" do
-        @author_daily.data["shares_got"].to_i.should eq @author_daily.initial_data["shares_got"].to_i + 1
+      it "should increase the user's num of #{action} by 1" do
+        @user.data[action.to_s].to_i.should eq @user.initial_data[action.to_s].to_i + 1
       end
 
-      it "should set a TTL for the objects" do
-        $redis.ttl(@user_daily.key).should > 0
-        $redis.ttl(@author_daily.key).should > 0
-      end
-    end
-  end
-
-  describe "Post Page Like Action" do
-    before :all do
-      open("http://#{HOST}/post_page_likes?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
-    end
-
-    it "should increase the user's num of post_page likes by 1" do
-      @user.data["post_page_likes"].to_i.should eq @user.initial_data["post_page_likes"].to_i + 1
-    end
-
-    it "should increase the post's author num of post page likes he got" do
-      @author.data["post_page_likes_got"].to_i.should eq @author.initial_data["post_page_likes_got"].to_i + 1
-    end
-
-    it "should increase the posts num of post page likes by 1" do
-      @post.data["post_page_likes"].to_i.should eq @post.initial_data["post_page_likes"].to_i + 1
-    end
-
-    it "should increase the author's UserWeekly post page likes count" do
-      @user_weekly.data["post_page_likes"].to_i.should eq @user_weekly.initial_data["post_page_likes"].to_i + 1
-    end
-
-    it "author num of page_likes he got should be equal to the number of post page_likes in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
-      @author.data["post_page_likes_got"].should eq @user_weekly.data["post_page_likes"]
-    end
-
-    describe "UserDaily" do
-      it "should increase the daily post page_likes of the user by one" do
-        @user_daily.data["post_page_likes"].to_i.should eq @user_daily.initial_data["post_page_likes"].to_i + 1
+      it "should increase the post's author num of #{action}_got he got" do
+        @author.data["#{action}_got"].to_i.should eq @author.initial_data["#{action}_got"].to_i + 1
       end
 
-      it "should increase the daily post page_likes of the author by one" do
-        @author_daily.data["post_page_likes_got"].to_i.should eq @author_daily.initial_data["post_page_likes_got"].to_i + 1
+      it "should increase the posts num of #{action} by 1" do
+        @post.data["#{action}"].to_i.should eq @post.initial_data["#{action}"].to_i + 1
       end
 
-      it "should set a TTL for the objects" do
-        $redis.ttl(@user_daily.key).should > 0
-        $redis.ttl(@author_daily.key).should > 0
-      end
-    end
-  end
-
-  describe "Tweet Action" do
-    before :all do
-      open("http://#{HOST}/tweets?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
-    end
-
-    it "should increase the user's num of tweets by 1" do
-      @user.data["tweets"].to_i.should eq @user.initial_data["tweets"].to_i + 1
-    end
-
-    it "should increase the post's author num of tweets he got" do
-      @author.data["tweets_got"].to_i.should eq @author.initial_data["tweets_got"].to_i + 1
-    end
-
-    it "should increase the posts num of tweets by 1" do
-      @post.data["tweets"].to_i.should eq @post.initial_data["tweets"].to_i + 1
-    end
-
-    it "should increase the author's UserWeekly tweets count" do
-      @user_weekly.data["tweets"].to_i.should eq @user_weekly.initial_data["tweets"].to_i + 1
-    end
-
-    it "author num of tweets he got should be equal to the number of tweets in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
-      @author.data["tweets_got"].should eq @user_weekly.data["tweets"]
-    end
-
-    describe "UserDaily" do
-      it "should increase the daily tweets of the user by one" do
-        @user_daily.data["tweets"].to_i.should eq @user_daily.initial_data["tweets"].to_i + 1
+      it "should increase the author's UserWeekly #{action} count" do
+        @user_weekly.data["#{action}"].to_i.should eq @user_weekly.initial_data["#{action}"].to_i + 1
       end
 
-      it "should increase the daily tweets of the author by one" do
-        @author_daily.data["tweets_got"].to_i.should eq @author_daily.initial_data["tweets_got"].to_i + 1
+      it "author num of #{action} he got should be equal to the number of #{action} in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
+        @author.data["#{action}_got"].should eq @user_weekly.data["#{action}"]
       end
 
-      it "should set a TTL for the objects" do
-        $redis.ttl(@user_daily.key).should > 0
-        $redis.ttl(@author_daily.key).should > 0
-      end
-    end
-  end
+      describe "UserDaily" do
+        it "should increase the daily #{action} of the user by one" do
+          @user_daily.data["#{action}"].to_i.should eq @user_daily.initial_data["#{action}"].to_i + 1
+        end
 
-  describe "gplus" do
-    before :all do
-      open("http://#{HOST}/gplus?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
-    end
+        it "should increase the daily #{action} of the author by one" do
+          @author_daily.data["#{action}_got"].to_i.should eq @author_daily.initial_data["#{action}_got"].to_i + 1
+        end
 
-    it "should increase the user's num of gplus by 1" do
-      @user.data["gplus"].to_i.should eq @user.initial_data["gplus"].to_i + 1
-    end
-
-    it "should increase the post's author num of gplus he got" do
-      @author.data["gplus_got"].to_i.should eq @author.initial_data["gplus_got"].to_i + 1
-    end
-
-    it "should increase the posts num of gplus by 1" do
-      @post.data["gplus"].to_i.should eq @post.initial_data["gplus"].to_i + 1
-    end
-
-    it "should increase the author's UserWeekly gplus count" do
-      @user_weekly.data["gplus"].to_i.should eq @user_weekly.initial_data["gplus"].to_i + 1
-    end
-
-    it "author num of gplus he got should be equal to the number of gplus in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
-      @author.data["gplus_got"].should eq @user_weekly.data["gplus"]
-    end
-
-    describe "UserDaily" do
-      it "should increase the daily gplus of the user by one" do
-        @user_daily.data["gplus"].to_i.should eq @user_daily.initial_data["gplus"].to_i + 1
-      end
-
-      it "should increase the daily gplus of the author by one" do
-        @author_daily.data["gplus_got"].to_i.should eq @author_daily.initial_data["gplus_got"].to_i + 1
-      end
-
-      it "should set a TTL for the objects" do
-        $redis.ttl(@user_daily.key).should > 0
-        $redis.ttl(@author_daily.key).should > 0
+        it "should set a TTL for the objects" do
+          $redis.ttl(@user_daily.key).should > 0
+          $redis.ttl(@author_daily.key).should > 0
+        end
       end
     end
   end
