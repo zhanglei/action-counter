@@ -51,38 +51,38 @@ describe "ActionCounter" do
     end
   end
 
-  describe "Page Like Action" do
+  describe "Post Page Like Action" do
     before :all do
-      open("http://#{HOST}/page_likes?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
+      open("http://#{HOST}/post_page_likes?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
     end
 
-    it "should increase the user's num of likes by 1" do
-      @user.data["page_likes"].to_i.should eq @user.initial_data["page_likes"].to_i + 1
+    it "should increase the user's num of post_page likes by 1" do
+      @user.data["post_page_likes"].to_i.should eq @user.initial_data["post_page_likes"].to_i + 1
     end
 
-    it "should increase the post's author num of likes he got" do
-      @author.data["page_likes_got"].to_i.should eq @author.initial_data["page_likes_got"].to_i + 1
+    it "should increase the post's author num of post page likes he got" do
+      @author.data["post_page_likes_got"].to_i.should eq @author.initial_data["post_page_likes_got"].to_i + 1
     end
 
-    it "should increase the posts num of likes by 1" do
-      @post.data["page_likes"].to_i.should eq @post.initial_data["page_likes"].to_i + 1
+    it "should increase the posts num of post page likes by 1" do
+      @post.data["post_page_likes"].to_i.should eq @post.initial_data["post_page_likes"].to_i + 1
     end
 
-    it "should increase the author's UserWeekly likes count" do
-      @user_weekly.data["page_likes"].to_i.should eq @user_weekly.initial_data["page_likes"].to_i + 1
+    it "should increase the author's UserWeekly post page likes count" do
+      @user_weekly.data["post_page_likes"].to_i.should eq @user_weekly.initial_data["post_page_likes"].to_i + 1
     end
 
-    it "author num of page_likes he got should be equal to the number of page_likes in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
-      @author.data["page_likes_got"].should eq @user_weekly.data["page_likes"]
+    it "author num of page_likes he got should be equal to the number of post page_likes in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
+      @author.data["post_page_likes_got"].should eq @user_weekly.data["post_page_likes"]
     end
 
     describe "UserDaily" do
-      it "should increase the daily page_likes of the user by one" do
-        @user_daily.data["page_likes"].to_i.should eq @user_daily.initial_data["page_likes"].to_i + 1
+      it "should increase the daily post page_likes of the user by one" do
+        @user_daily.data["post_page_likes"].to_i.should eq @user_daily.initial_data["post_page_likes"].to_i + 1
       end
 
-      it "should increase the daily page_likes of the author by one" do
-        @author_daily.data["page_likes_got"].to_i.should eq @author_daily.initial_data["page_likes_got"].to_i + 1
+      it "should increase the daily post page_likes of the author by one" do
+        @author_daily.data["post_page_likes_got"].to_i.should eq @author_daily.initial_data["post_page_likes_got"].to_i + 1
       end
 
       it "should set a TTL for the objects" do
