@@ -14,42 +14,80 @@ describe "ActionCounter" do
     before :all do
       open("http://#{HOST}/shares?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
     end
-
-    it "should increase the user's num of shares by 1" do
-      @user.data["shares"].to_i.should eq @user.initial_data["shares"].to_i + 1
-    end
-
-    it "should increase the post's author num of shares he got" do
-      @author.data["shares_got"].to_i.should eq @author.initial_data["shares_got"].to_i + 1
-    end
-
-    it "should increase the posts num of shares by 1" do
-      @post.data["shares"].to_i.should eq @post.initial_data["shares"].to_i + 1
-    end
-
-    it "should increase the author's UserWeekly shares count" do
-      @user_weekly.data["shares"].to_i.should eq @user_weekly.initial_data["shares"].to_i + 1
-    end
-
-    it "author num of shares he got should be equal to the number of shares in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
-      @author.data["shares_got"].should eq @user_weekly.data["shares"]
-    end
-
-    describe "UserDaily" do
-      it "should increase the daily shares of the user by one" do
-        @user_daily.data["shares"].to_i.should eq @user_daily.initial_data["shares"].to_i + 1
+    describe "valid call" do
+      it "should increase the user's num of shares by 1" do
+        @user.data["shares"].to_i.should eq @user.initial_data["shares"].to_i + 1
       end
 
-      it "should increase the daily shares of the author by one" do
-        @author_daily.data["shares_got"].to_i.should eq @author_daily.initial_data["shares_got"].to_i + 1
+      it "should increase the post's author num of shares he got" do
+        @author.data["shares_got"].to_i.should eq @author.initial_data["shares_got"].to_i + 1
       end
 
-      it "should set a TTL for the objects" do
-        $redis.ttl(@user_daily.key).should > 0
-        $redis.ttl(@author_daily.key).should > 0
+      it "should increase the posts num of shares by 1" do
+        @post.data["shares"].to_i.should eq @post.initial_data["shares"].to_i + 1
+      end
+
+      it "should increase the author's UserWeekly shares count" do
+        @user_weekly.data["shares"].to_i.should eq @user_weekly.initial_data["shares"].to_i + 1
+      end
+
+      it "author num of shares he got should be equal to the number of shares in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
+        @author.data["shares_got"].should eq @user_weekly.data["shares"]
+      end
+
+      describe "UserDaily" do
+        it "should increase the daily shares of the user by one" do
+          @user_daily.data["shares"].to_i.should eq @user_daily.initial_data["shares"].to_i + 1
+        end
+
+        it "should increase the daily shares of the author by one" do
+          @author_daily.data["shares_got"].to_i.should eq @author_daily.initial_data["shares_got"].to_i + 1
+        end
+
+        it "should set a TTL for the objects" do
+          $redis.ttl(@user_daily.key).should > 0
+          $redis.ttl(@author_daily.key).should > 0
+        end
       end
     end
+
+    describe "'authour' typo" do
+      before :all do
+        open("http://#{HOST}/shares?user=#{@user.id}&authour=#{@author.id}&post=#{@post.id}")
+      end
+
+      it "should increase the user's num of shares by 1" do
+        @user.data["shares"].to_i.should eq @user.initial_data["shares"].to_i + 2
+      end
+
+      it "should increase the post's author num of shares he got" do
+        @author.data["shares_got"].to_i.should eq @author.initial_data["shares_got"].to_i + 2
+      end
+
+      it "should increase the posts num of shares by 1" do
+        @post.data["shares"].to_i.should eq @post.initial_data["shares"].to_i + 2
+      end
+
+      it "should increase the author's UserWeekly shares count" do
+        @user_weekly.data["shares"].to_i.should eq @user_weekly.initial_data["shares"].to_i + 2
+      end
+
+      it "author num of shares he got should be equal to the number of shares in his user weekly (assuming there is no data for those objects in the DB before this specs run)" do
+        @author.data["shares_got"].should eq @user_weekly.data["shares"]
+      end
+
+      describe "UserDaily" do
+        it "should increase the daily shares of the user by one" do
+          @user_daily.data["shares"].to_i.should eq @user_daily.initial_data["shares"].to_i + 2
+        end
+
+        it "should increase the daily shares of the author by one" do
+          @author_daily.data["shares_got"].to_i.should eq @author_daily.initial_data["shares_got"].to_i + 2
+        end
+      end
+    end    
   end
+
 
   describe "Like Action" do
     before :all do
