@@ -11,7 +11,7 @@ describe "ActionCounter" do
   end
 
 
-  [:post_page_likes, :post_page_gplus,  :tweets, :shares, :post_page_facebook_shares, :post_page_gplus_shares].each do |action|
+  [:post_page_likes, :post_page_gplus_plus1,  :tweets, :shares, :post_page_facebook_shares, :post_page_gplus_shares].each do |action|
     before :all do
       open("http://#{HOST}/#{action}?user=#{@user.id}&author=#{@author.id}&post=#{@post.id}")
     end
