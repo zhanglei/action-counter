@@ -54,11 +54,13 @@ function getValues(key, attributes)
 		end
 	elseif key_type == "zset" then
 		value, err = red:zrevrange(key, from, to, "withscores")
-	elseif key_type == "none" then
-		err = "No such key '" .. key .. "' in DB"
+	elseif key_type == "string" then
+		value, err = red:get(key)
+	else
+		-- err = "No such key '" .. key .. "' in DB"
 	end
 
-	if not value then 
+	if not value and err then
 		ngx.log(ngx.ERR, "Failed to get value from Redis for key '" .. key .. "': " .. err)
 		local err_response = { error = err }
 		return err_response
