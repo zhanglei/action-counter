@@ -86,11 +86,16 @@ else
 	response = getValues(key, attributes)
 end
 
+local req_err = false  
+
 if type(response) == "table" then
+	if response["error"] then req_err = true end
 	response = cjson.encode(response)
 end
 
-ok, err = red:set_keepalive(10000, 100)
-if not ok then ngx.log(ngx.ERR, err) end
+if not req_err then
+	ok, err = red:set_keepalive(10000, 100)
+	if not ok then ngx.log(ngx.ERR, err) end
+end
 
 ngx.say(response)
