@@ -25,7 +25,8 @@ end
 function utils:initRedis()
   local red = redis:new()
   red:set_timeout(3000) -- 3 sec
-  local ok, err = red:connect("127.0.0.1", 6379)
+  --local ok, err = red:connect("127.0.0.1", 6379)
+  local ok, err = red:connect("/var/run/redis/redis.sock")
   if not ok then utils:logErrorAndExit("Error connecting to redis: ".. err) end
   return red
 end
