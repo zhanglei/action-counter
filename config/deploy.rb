@@ -83,7 +83,7 @@ namespace :redis do
   end
 
   task :stop, roles: :db do
-    run "sudo service redis-server start"
+    run "sudo service redis-server stop"
   end
 
   task :restart, roles: :db do

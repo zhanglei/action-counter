@@ -17,6 +17,15 @@ function utils:normalizeKeys(tbl)
         value = { v }
       end
     end
+
+    if type(value) == "table" then
+      for key, vl in pairs(value) do
+        value[key] = vl:gsub("?", "")
+      end
+    else
+      value = value:gsub("?", "")
+    end
+
     normalized[key] = value
   end
   return normalized
@@ -34,6 +43,7 @@ function utils:logErrorAndExit(err)
    ngx.log(ngx.ERR, err)
    utils:emptyGif()
 end
+
 
 function utils:emptyGif()
   ngx.exec('/_.gif')
