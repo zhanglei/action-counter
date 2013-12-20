@@ -63,10 +63,10 @@ function getValues(key, attributes)
 	if not value and err then
 		if key then -- PATCH until igor's fix
 			ngx.log(ngx.ERR, "Failed to get value from Redis for key '" .. key .. "': " .. err)
-			local err_response = { error = err }
+			local err_response = { }
 			return err_response
 		else
-			return { error = err }
+			return { }
 		end
 	elseif type(value) == "table" then
 		value = red:array_to_hash(value)  -- array_to_hash is an auxalrity function, written in lua, its part of the redis package, and does not actually run on the redis server
