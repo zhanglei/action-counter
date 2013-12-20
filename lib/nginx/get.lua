@@ -57,7 +57,7 @@ function getValues(key, attributes)
 	elseif key_type == "string" then
 		value, err = red:get(key)
 	else
-		-- err = "No such key '" .. key .. "' in DB"
+		err = "No such key in DB"
 	end
 
 	if not value and err then
