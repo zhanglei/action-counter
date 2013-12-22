@@ -61,7 +61,7 @@ function getValues(key, attributes)
 	end
 
 	if not value and err then
-		if key then 
+		if key and not err:match("No such key in DB") then 
 			ngx.log(ngx.ERR, "Failed to get value from Redis for key '" .. key .. "': " .. err)
 		else
 			ngx.log(ngx.ERR, "Request without a key: " .. err)
