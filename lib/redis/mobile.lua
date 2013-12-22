@@ -15,7 +15,7 @@ function MobileActivity:markActive()
   }
   for i, key in pairs(keys) do
     redis.call("SETBIT", key, self.id, 1)
-    self:expire(key, 2592000)
+    self:expire(key, 604800)
   end
 end
 
@@ -27,7 +27,7 @@ function MobileActivity:pn_action(action_type)
     }
     for i, key in ipairs(keys) do
       redis.call("INCR", key)
-      self:expire(key, 2592000)
+      self:expire(key, 604800)
     end
   end
 end
