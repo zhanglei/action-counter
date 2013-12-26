@@ -33,6 +33,7 @@ end
 
 function getValues(key, attributes)
 	local value
+	local values
 	local err
 	local key_type, err = determineDataType(key)
 	if key_type == "hash" then
