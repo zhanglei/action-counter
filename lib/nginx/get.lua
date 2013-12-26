@@ -96,7 +96,7 @@ if type(response) == "table" then
 end
 
 if not req_err then
-	ok, err = red:set_keepalive(10000, 1000)
+	ok, err = red:set_keepalive(10000, 5000)
 	if not ok then ngx.log(ngx.ERR, err) end
 end
 
