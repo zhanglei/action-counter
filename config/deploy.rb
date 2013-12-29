@@ -103,8 +103,8 @@ namespace :deploy do
 
   task :load_redis_lua do
     run "sudo rm -f #{nginx_dir}/conf/include/vars.conf"
-    run "sudo echo 'set \$redis_counter_hash '$(sudo ~/redis/src/redis-cli -s /var/run/redis/redis.sock SCRIPT LOAD \"$(cat '#{deploy_to}/current/lib/redis/actioncounter.lua')\")';' > #{nginx_dir}/conf/vars.conf"
-    run "sudo echo 'set \$redis_mobile_hash '$(sudo ~/redis/src/redis-cli -s /var/run/redis/redis.sock SCRIPT LOAD \"$(cat '#{deploy_to}/current/lib/redis/mobile.lua')\")';' >> #{nginx_dir}/conf/vars.conf"
+    run "sudo echo 'set \$redis_counter_hash '$(sudo ~/redis/src/redis-cli SCRIPT LOAD \"$(cat '#{deploy_to}/current/lib/redis/actioncounter.lua')\")';' > #{nginx_dir}/conf/vars.conf"
+    run "sudo echo 'set \$redis_mobile_hash '$(sudo ~/redis/src/redis-cli SCRIPT LOAD \"$(cat '#{deploy_to}/current/lib/redis/mobile.lua')\")';' >> #{nginx_dir}/conf/vars.conf"
     # run "sudo echo \"set \\$config '$(cat '#{deploy_to}/current/config/actioncounter.config' | tr -d '\n' | tr -d ' ')';\" >> #{nginx_dir}/conf/vars.conf"
     run "sudo ~/redis/src/redis-cli -s /var/run/redis/redis.sock set action_counter_config_live \"$(cat '#{deploy_to}/current/config/actioncounter.config' | tr -d '\n' | tr -d ' ')\""
   end
