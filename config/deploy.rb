@@ -79,15 +79,16 @@ end
 
 namespace :redis do
   task :start, roles: :db do
-    run "sudo service redis-server start"
+    run "sudo service redis_6379 start"
   end
 
   task :stop, roles: :db do
-    run "sudo service redis-server stop"
+    run "sudo service redis_6379 stop"
   end
 
   task :restart, roles: :db do
-    run "sudo service redis-server restart"
+    stop
+    start
   end
 end
 
