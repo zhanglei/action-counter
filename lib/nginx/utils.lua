@@ -40,7 +40,7 @@ function utils:initRedis()
 end
 
 function utils:logErrorAndExit(err)
-   ngx.log(ngx.ERR, err)
+   ngx.log(ngx.ERR, err .. "  [" .. ngx.req.get_headers()["User-Agent"] .. "]  ")
    utils:emptyGif()
 end
 
