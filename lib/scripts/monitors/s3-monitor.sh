@@ -11,4 +11,4 @@ logs_backup()
 }
 
 logs_backup $FOLDER_TO_CHECK
-logs_backup /access_logs/$FOLDER_TO_CHECK
+logs_backup access_logs/$FOLDER_TO_CHECK
