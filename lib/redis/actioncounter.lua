@@ -92,7 +92,7 @@ function Base:sevenDaysCount(should_count, key)
     local first_day = tonumber(self._ids[3])
     for day = 0, 6, 1 do
       local curDayObjIds = dupArray(self._ids)
-      curDayObjIds[3] = (first_day + day) % 366
+      curDayObjIds[3] = string.format("%03d", (first_day + day) % 366 )
       if (first_day + day) > 365 then
         curDayObjIds[4] = string.format("%03d", (tonumber(curDayObjIds[4]) + 1) )
       end
