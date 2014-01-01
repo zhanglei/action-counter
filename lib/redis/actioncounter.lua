@@ -94,7 +94,7 @@ function Base:sevenDaysCount(should_count, key)
       local curDayObjIds = dupArray(self._ids)
       curDayObjIds[3] = (first_day + day) % 366
       if (first_day + day) > 365 then
-        curDayObjIds[4] = tostring( tonumber(curDayObjIds[4]) + 1 )
+        curDayObjIds[4] = string.format("%03d", (tonumber(curDayObjIds[4]) + 1) )
       end
       local curDayObj = Base:new(self._obj_type, curDayObjIds, self._type)
       curDayObj:count(key, 1)
