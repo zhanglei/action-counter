@@ -93,6 +93,9 @@ function Base:sevenDaysCount(should_count, key)
     for day = 0, 6, 1 do
       local curDayObjIds = dupArray(self._ids)
       curDayObjIds[3] = (first_day + day) % 366
+      if (first_day + day) > 365 then
+        curDayObjIds[4] = tostring( tonumber(curDayObjIds[4]) + 1 )
+      end
       local curDayObj = Base:new(self._obj_type, curDayObjIds, self._type)
       curDayObj:count(key, 1)
       curDayObj:expire(1209600)  -- expire in 2 weeks
@@ -161,11 +164,6 @@ end
 -- parse key and replace "place holders" with their value from tbl.
 -- matching replace values in tbl can be arrays, in such case an array will be returned with all the possible keys combinations
 local function addValuesToKey(tbl, key)
-  local status, err = pcall(justDebugIt, tbl, key)
-  if not status then
-    redis.call("SET", "JustDebugIt", "match is " .. key:match("{.*}") .. " key is " .. key)
-  end
-
   local rslt = { key }
   local match = key:match("{[%w_]*}")
 

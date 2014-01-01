@@ -185,7 +185,13 @@ describe "Read Action" do
   describe "Last 7 days league leaderboard custom count" do
     before :each do
       @league_seven_days_leaderboards = (0..6).map do |day|
-        create :LeagueSevenDaysLeaderboard, { league: 1, locale: @locale, yday: Time.now.strftime("%j").to_i + day, year: Time.now.strftime("%Y") }
+        day_index = Time.now.strftime("%j").to_i + day
+        year = Time.now.strftime("%Y")
+        if day_index > 365
+          day_index = day_index % 366
+          year += 1
+        end
+        create :LeagueSevenDaysLeaderboard, { league: 1, locale: @locale, yday: day_index, year: year }
       end
       open("http://#{HOST}/reads?post=#{@post.id}&user=#{@user.id}&author=#{@author.id}&league=#{1}&team=#{@team_weekly.ids[:team]}&locale=#{@locale}&ulb=1&plb=1")
     end
