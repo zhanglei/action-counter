@@ -6,7 +6,7 @@ describe "ActionCounter" do
       @user = create :User
       @author = create :User
       @post = create :Post
-      @user_weekly = create :UserWeekly, { user: @author.id, week: Time.now.strftime("%W"), year: Time.now.strftime("%Y") }
+      @user_weekly = create :UserWeekly, { user: @author.id, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
       @user_daily = create :UserDaily, { user: @user.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
       @author_daily = create :UserDaily, { user: @author.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
     end

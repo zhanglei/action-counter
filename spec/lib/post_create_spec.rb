@@ -8,7 +8,7 @@ describe "Post Created" do
     @team_id = rand(100)
     @locale = "en"
     @user_daily = create :UserDaily, { user: @user.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
-    @user_weekly = create :UserWeekly, { user: @user.id, week: Time.now.strftime("%W"), year: Time.now.strftime("%Y") }
+    @user_weekly = create :UserWeekly, { user: @user.id, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
     @league_counters = create :LeagueCounters, { id: @league_id }
     @league_writers = create :LeagueWriters, { id: @league_id }
     @team_counters = create :TeamCounters, { id: @team_id }

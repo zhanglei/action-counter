@@ -9,13 +9,13 @@ describe "Read Action" do
     team_id = 5
     user_id = 12
     @locale = "en"
-    @league_weekly = create :LeagueWeekly, { league: league_id, locale: @locale, week: Time.now.strftime("%W"), year: Time.now.strftime("%Y") }
+    @league_weekly = create :LeagueWeekly, { league: league_id, locale: @locale, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
     @league_monthly = create :LeagueMonthly, { league: league_id, locale: @locale, month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
-    @team_weekly = create :TeamWeekly, { team: team_id, locale: @locale, week: Time.now.strftime("%W"), year: Time.now.strftime("%Y") }
+    @team_weekly = create :TeamWeekly, { team: team_id, locale: @locale, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
     @team_monthly = create :TeamMonthly, { team: team_id, locale: @locale, month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
-    @league_weekly_leaderboard = create :LeagueWeeklyLeaderboard, { league: league_id, locale: @locale, week: Time.now.strftime("%W"), year: Time.now.strftime("%Y") }
+    @league_weekly_leaderboard = create :LeagueWeeklyLeaderboard, { league: league_id, locale: @locale, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
     @league_monthly_leaderboard = create :LeagueMonthlyLeaderboard, { league: league_id, locale: @locale, month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
-    @team_weekly_leaderboard = create :TeamWeeklyLeaderboard, { team: team_id, locale: @locale, week: Time.now.strftime("%W"), year: Time.now.strftime("%Y") }
+    @team_weekly_leaderboard = create :TeamWeeklyLeaderboard, { team: team_id, locale: @locale, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
     @team_monthly_leaderboard = create :TeamMonthlyLeaderboard, { team: team_id, locale: @locale, month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
     @user_daily = create :UserDaily, { user: @user.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
     @author_daily = create :UserDaily, { user: @author.id, day: Time.now.strftime("%d"), month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
@@ -26,12 +26,13 @@ describe "Read Action" do
     @user_id = @author.id
     @week = Time.now.strftime("%W")
     @year = Time.now.strftime("%Y")
-    @user_weekly_key = "UserWeekly_#{@user_id}_#{@week}_#{@year}"
-    @user_weekly_demographics_key = "UserWeeklyDemographics_#{@user_id}_#{@week}_#{@year}"
-    @user_weekly_data = Hash.new(0)
-    @user_weekly_data.merge!($redis.hgetall @user_weekly_key)
-    @user_weekly_demographics_data = Hash.new(0)
-    @user_weekly_demographics_data.merge!($redis.hgetall @user_weekly_demographics_key)
+    @user_weekly = create :UserWeekly, { user: @user_id, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
+    # @user_weekly_key = "UserWeekly_#{@user_id}_#{@week}_#{@year}"
+    @user_weekly_demographics = create :UserWeeklyDemographics, { user: @user_id, week_year: [Time.now.strftime("%W"), Time.now.strftime("%Y")] }
+    # @user_weekly_data = Hash.new(0)
+    # @user_weekly_data.merge!($redis.hgetall @user_weekly_key)
+    # @user_weekly_demographics_data = Hash.new(0)
+    # @user_weekly_demographics_data.merge!($redis.hgetall @user_weekly_demographics_key)
   end
 
   before :each do
@@ -80,13 +81,15 @@ describe "Read Action" do
 
   describe "UserWeekly" do
     it "should increase reads counter" do
-      $redis.hget(@user_weekly_key, "reads").to_i.should eq @user_weekly_data["reads"].to_i + 1
+      @user_weekly.data["reads"].to_i.should eq @user_weekly.initial_data["reads"].to_i + 1
+      # $redis.hget(@user_weekly.key, "reads").to_i.should eq @user_weekly.data["reads"].to_i + 1
     end
   end
 
   describe "UserWeeklyDemographics" do
     it "should increase reads counter" do
-      $redis.hget(@user_weekly_demographics_key, "--").to_i.should eq @user_weekly_demographics_data["--"].to_i + 1
+      @user_weekly_demographics.data["--"].to_i.should eq @user_weekly_demographics.initial_data["--"].to_i + 1
+      # $redis.hget(@user_weekly_demographics.key, "--").to_i.should eq @user_weekly_demographics.data["--"].to_i + 1
     end
   end
 

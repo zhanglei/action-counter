@@ -57,9 +57,10 @@ function parseArgs(line)
   args["date"] = os.date("%Y-%m-%d",date)
   args["country"] = getCountry(ip)
 
+  args["week_year"] = args["week"] .. "_" .. args["year"]
   if args["week"] == "00" then
-    args["week"] = "52"
-    args["year"] = tostring( tonumber(args["year"]) - 1 )
+    local last_year = tostring( tonumber(args["year"]) - 1 )
+    args["week_year"] = "52_" .. last_year
   end
   return args
 end
