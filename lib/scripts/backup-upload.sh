@@ -26,5 +26,4 @@ DeleteDaily30DaysAgo()
   aws s3 rm s3://action-counter-logs/$THIRTEE_DAYS_AGO --recursive
 }
 
-#Enable in Jan 14
-#DeleteDaily30DaysAgo
+DeleteDaily30DaysAgo
