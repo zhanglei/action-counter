@@ -49,10 +49,30 @@ describe "Login" do
     end
 
     it "should not count if 'countcategory' parameter is false (or 0)" do
-      keys_count = $redis.keys("*").size
       open("http://#{HOST}/feature?user=#{@user.id}&locale=#{@locale}&countcategory=0&category=#{@category}&channel=#{@other_channel}")
       @category_monthly_featured.set["user_#{@user.id}"].should eq @category_monthly_featured.initial_set["user_#{@user.id}"] + 1
     end
+
+    describe "multiple categories" do
+      before :each do
+        @other_category = "Transfer"
+        @other_category_monthly_featured = create :CategoryMonthlyFeatured, { category: @other_category, locale: @locale, month: Time.now.strftime("%m"), year: Time.now.strftime("%Y") }
+        open("http://#{HOST}/feature?user=#{@user.id}&locale=#{@locale}&countcategory=1&category[]=#{@category}&category[]=#{@other_category}&" + @channels.map { |c| "channel[]=#{c}"}.join("&") )
+      end
+
+      it "should increase the user num of featured posts in both categories" do
+        @category_monthly_featured.set["user_#{@user.id}"].should eq @category_monthly_featured.initial_set["user_#{@user.id}"] + 2 #because of prev spec
+        @other_category_monthly_featured.set["user_#{@user.id}"].should eq @other_category_monthly_featured.initial_set["user_#{@user.id}"] + 1
+      end      
+
+      it "should not count if 'countcategory' parameter is false (or 0)" do
+        #depend on prev specs
+        open("http://#{HOST}/feature?user=#{@user.id}&locale=#{@locale}&countcategory=0&category[]=#{@category}&category[]=#{@other_category}&" + @channels.map { |c| "channel[]=#{c}"}.join("&") )
+        @category_monthly_featured.set["user_#{@user.id}"].should eq @category_monthly_featured.initial_set["user_#{@user.id}"] + 2
+        @other_category_monthly_featured.set["user_#{@user.id}"].should eq @other_category_monthly_featured.initial_set["user_#{@user.id}"] + 1
+      end      
+    end
+
   end
 
 end
