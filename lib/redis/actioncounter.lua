@@ -123,15 +123,31 @@ end
 
 -- return an array with all the values in tbl that match the given keys array
 local function getValueByKeys(tbl, keys)
-  local values = {}
+  local innerTableIndex = 0
+  local allValuesOptions = {{}}
   if type(keys) == "table" then
     for i, key in ipairs(keys) do
-      table.insert(values, tbl[key])
+      for j, curValues in ipairs(allValuesOptions) do
+        if type(tbl[key]) == "table" then
+          local tmpAllValuesOptions = {}
+          for k, innerKey in ipairs(tbl[key]) do
+            for l, curValuesDup in ipairs(allValuesOptions) do
+              local tmpCurValuesDup = dupArray(curValuesDup)
+              table.insert(tmpCurValuesDup, innerKey)
+              table.insert(tmpAllValuesOptions, tmpCurValuesDup)
+            end
+          end
+          allValuesOptions = tmpAllValuesOptions
+          break
+        else
+          table.insert(curValues, tbl[key])
+        end
+      end
     end
   else
-    table.insert(values, tbl[keys])
+    table.insert(allValuesOptions[1], tbl[keys])
   end
-  return values
+  return allValuesOptions
 end
 
 local function justDebugIt(tbl, key)
@@ -209,29 +225,32 @@ if action_config then
     for i, defs in ipairs(methods) do
       setmetatable(defs, { __index = defaultMethod })
 
-      local ids = getValueByKeys(params, defs["id"])
-      local _type = defs["type"] or "hash"
+      local objectsIds = getValueByKeys(params, defs["id"])
 
-      local obj = Base:new(obj_type, ids, _type)
+      for j, ids in ipairs(objectsIds) do
+        local _type = defs["type"] or "hash"
 
-      if defs["count"] then
-        local key = addValuesToKey(params, defs["count"])
-        local change = defs["change"]
-        obj:count(key, change)
-      end
+        local obj = Base:new(obj_type, ids, _type)
 
-      for j, custom_function in ipairs(defs["custom_functions"]) do
-        local function_name = custom_function["name"]
-        local args = {}
-        for z, arg in ipairs(custom_function["args"]) do
-          local arg_value = addValuesToKey(params, arg)
-          table.insert(args, arg_value)
+        if defs["count"] then
+          local key = addValuesToKey(params, defs["count"])
+          local change = defs["change"]
+          obj:count(key, change)
         end
-        obj[function_name](obj, unpack(args))
-      end
 
-      if defs["expire"] then
-        obj:expire(defs["expire"])
+        for j, custom_function in ipairs(defs["custom_functions"]) do
+          local function_name = custom_function["name"]
+          local args = {}
+          for z, arg in ipairs(custom_function["args"]) do
+            local arg_value = addValuesToKey(params, arg)
+            table.insert(args, arg_value)
+          end
+          obj[function_name](obj, unpack(args))
+        end
+
+        if defs["expire"] then
+          obj:expire(defs["expire"])
+        end
       end
     end
   end
