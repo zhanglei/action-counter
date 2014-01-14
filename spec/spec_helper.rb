@@ -1,7 +1,15 @@
+require 'open-uri'
+require 'script_loader'
 require 'rubygems'
 require 'spork'
+require 'redis'
+require 'json'
+require 'support/redis_object_factory'
+require "integration/log_player_integrator"
 #uncomment the following line to use spork with the debugger
 #require 'spork/ext/ruby-debug'
+
+HOST = "127.0.0.1"
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
@@ -12,7 +20,6 @@ end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
-
 end
 
 # --- Instructions ---
@@ -45,7 +52,16 @@ end
 # free to delete them.
 
 
-
-
 lib = File.expand_path('../../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+$redis = Redis.new(host: HOST, port: "6379")
+$log_player_redis = Redis.new(host: HOST, port: "6379", db: 1)
+ScriptLoader.load(true)
+RedisObjectFactory.redis = $redis
+
+def create(type, ids = nil)
+  ids ||= { id: rand(1000000) }
+  RedisObjectFactory.new(type, ids)
+end
+
